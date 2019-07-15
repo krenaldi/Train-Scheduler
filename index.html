@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>New York Times Search</title>
+    <title>Train Scheduler</title>
     <!-- Bootstrap CSS CDN  -->
     <link rel="stylesheet"
         href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0/css/bootstrap.min.css" />
@@ -22,33 +22,29 @@
 
         <!-- Jumbotron for Title -->
         <div class="jumbotron">
-            <h1 class="text-center header">Employee Data Management</h1>
-            <p class="text-center">A Comprehensive Directory of Employee Billable Hours</p>
+            <h1 class="text-center header">Train Scheduler</h1>
+            <p class="text-center"></p>
         </div>
 
         <!-- This row will handle all of the retrieved articles -->
         <div class="row">
             <div class="col-sm-12">
-                <br>
-
-                <!-- This card will initially be made up of a card and wells for each of the articles retrieved -->
                 <div class="card">
 
-                    <!-- card Heading for the retrieved articles box -->
+                    <!-- card heading for the train schedule -->
                     <div class="card-header">
-                        <strong> Current Employees</strong>
+                        <strong>Current Train Schedule</strong>
                     </div>
 
-                    <!-- This main card will hold each of the resulting articles -->
-                    <div class="card-body" id="article-section">
+                    <!-- This main card will hold the train schedule for each train -->
+                    <div class="card-body" id="train-schedule">
                         <table class="table">
                             <tr>
-                                <th scope="col">Employee Name</th>
-                                <th scope="col">Role</th>
-                                <th scope="col">Start Date</th>
-                                <th scope="col">Month Worked</th>
-                                <th scope="col">Monthly Rate</th>
-                                <th scope="col">Total Billed ($)</th>
+                                <th scope="col">Train Name</th>
+                                <th scope="col">Destination</th>
+                                <th scope="col">Frequency (min)</th>
+                                <th scope="col">Next Arrival</th>
+                                <th scope="col">Minutes to Arrival</th>
                             </tr>
 
                         </table>
@@ -57,46 +53,41 @@
             </div>
         </div>
 
-        <!-- Row for Searching New York Times -->
+        <!-- Row for Adding New Train Schedules -->
         <div class="row">
             <div class="col-sm-12">
-                <br>
-                <!-- First card is for handling the search parameters -->
                 <div class="card">
                     <div class="card-header">
-                        <strong>Add Employee</strong>
+                        <strong>Add Train</strong>
                     </div>
                     <div class="card-body">
-
                         <!-- Here we create an HTML Form for handling the inputs-->
                         <form role="form">
-
-                            <!-- Here we create the text box for capturing the search term-->
+                            <!-- text box for capturing the train name-->
                             <div class="form-group">
-                                <label for="employee"> Employee Name</label>
-                                <input type="text" class="form-control" id="employee">
+                                <label for="train">Train Name</label>
+                                <input type="text" class="form-control" id="train">
                             </div>
 
-                            <!-- Here we capture the number of records that the user wants to retrieve  -->
+                            <!-- Here we capture the Destination of the train -->
                             <div class="form-group">
-                                <label for="role">Role</label>
-                                <input type="text" class="form-control" id="role">
+                                <label for="destination">Destination</label>
+                                <input type="text" class="form-control" id="destination">
+                            </div>
+                            <!-- Here we capture the First Train Time Parameter-->
+                            <div class="form-group">
+                                <label for="first-train">First Train Time (HH:MM military time)</label>
+                                <input type="text" class="form-control" id="first-train">
                             </div>
 
-                            <!-- Here we capture the Start Year Parameter-->
+                            <!-- Here we capture the Frequency Parameter -->
                             <div class="form-group">
-                                <label for="start-date">Start Date (DD/MM/YY)</label>
-                                <input type="text" class="form-control" id="start-date">
-                            </div>
-
-                            <!-- Here we capture the End Year Parameter -->
-                            <div class="form-group">
-                                <label for="monthly-rate">Monthly Rate</label>
-                                <input type="text" class="form-control" id="monthly-rate">
+                                <label for="frequency">Frequency (min)</label>
+                                <input type="text" class="form-control" id="frequency">
                             </div>
 
                             <!-- Here we have our final submit button -->
-                            <button type="submit" class="btn btn-default" id="add-employee">Submit</button>
+                            <button type="submit" class="btn btn-default" id="add-train">Submit</button>
 
                         </form>
                     </div>
@@ -113,46 +104,46 @@
     <script src="https://momentjs.com/downloads/moment.min.js"></script>
 
     <!-- LINKS FOR FIREBASE GO HERE -->
-    <script src="https://www.gstatic.com/firebasejs/6.0.4/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/6.0.4/firebase-database.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/6.3.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/6.3.0/firebase-database.js"></script>
 
     <!-- Code to the JavaScript File -->
     <script>
-        //  START CODING BELOW!!
 
         // Initialize Firebase
         var firebaseConfig = {
-            apiKey: "AIzaSyCHXbOaEMjx56hbJn5ADsZ5F1dV_xIEA3w",
-            authDomain: "first-firebase-9ef02.firebaseapp.com",
-            databaseURL: "https://first-firebase-9ef02.firebaseio.com",
-            projectId: "first-firebase-9ef02",
+            apiKey: "AIzaSyDBvG9qU2TvdBny8dpW6XshPMJWB6sLr2A",
+            authDomain: "train-schedule-dd875.firebaseapp.com",
+            databaseURL: "https://train-schedule-dd875.firebaseio.com",
+            projectId: "train-schedule-dd875",
             storageBucket: "",
-            messagingSenderId: "1095045499134",
-            appId: "1:1095045499134:web:c835de193f57beaf"
+            messagingSenderId: "12621584844",
+            appId: "1:12621584844:web:56243338800d9652"
         };
-
+        // Initialize Firebase
         firebase.initializeApp(firebaseConfig);
+
 
         // Create a variable to reference the database
         var database = firebase.database();
-        var employee = "";
-        var role = "";
-        var date = "";
-        var rate = 0;
+        var train = "";
+        var destination = "";
+        var time = "";
+        var frequency = 0;
 
         // Capture Button Click
-        $("#add-employee").on("click", function (event) {
+        $("#add-train").on("click", function (event) {
             // Don't refresh the page!
             event.preventDefault();
 
             // Code in the logic for storing and retrieving the most recent user.
             // Get inputs
             var data = {
-                employee: $("#employee").val().trim(),
-                role: $("#role").val().trim(),
-                date: $("#start-date").val().trim(),
-                rate: $("#monthly-rate").val().trim(),
-                dateAdded: firebase.database.ServerValue.TIMESTAMP
+                train: $("#train").val().trim(),
+                destination: $("#destination").val().trim(),
+                time: $("#first-train").val().trim(),
+                frequency: $("#frequency").val().trim(),
+                //dateAdded: firebase.database.ServerValue.TIMESTAMP
             }
 
             database.ref().push(data);
@@ -166,22 +157,22 @@
             console.log(childSnapshot.val());
 
             // Log the value of the various properties
-            console.log(childSnapshot.val().employee);
-            console.log(childSnapshot.val().role);
-            console.log(childSnapshot.val().date);
-            console.log(childSnapshot.val().rate);
+            console.log(childSnapshot.val().train);
+            console.log(childSnapshot.val().destination);
+            console.log(childSnapshot.val().time);
+            console.log(childSnapshot.val().frequency);
 
-            var employee_display = $("<td>").text(childSnapshot.val().employee);
-            var role_display = $("<td>").text(childSnapshot.val().role);
-            var start_date_display = $("<td>").text(childSnapshot.val().date);
-            var monthly_rate_display = $("<td>").text(childSnapshot.val().rate);
-            var months_worked = Math.abs(moment(childSnapshot.val().date).diff(moment(), "months"));
+            var train_display = $("<td>").text(childSnapshot.val().train);
+            var destination_display = $("<td>").text(childSnapshot.val().destination);
+            var frequency_display = $("<td>").text(childSnapshot.val().frequency);
+            var time_display = $("<td>").text(childSnapshot.val().time);
+            //var months_worked = Math.abs(moment(childSnapshot.val().date).diff(moment(), "months"));
             //console.log(months_worked);
-            var monthly_worked_display = $("<td>").text(months_worked);
-            var billed = months_worked * childSnapshot.val().rate;
-            var billed_display = $("<td>").text(billed);
+            //var monthly_worked_display = $("<td>").text(months_worked);
+            //var billed = months_worked * childSnapshot.val().rate;
+            var miuntes_away_display = $("<td>").text(billed);
             var row = $("<tr>");
-            row.append(employee_display, role_display, start_date_display, monthly_worked_display, monthly_rate_display, billed_display);
+            row.append(train_display, destination_display, frequency_display, time_display, minutes_away_rate_display);
             $(".table").append(row);
 
             // Create Error Handling
