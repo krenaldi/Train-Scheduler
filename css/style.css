@@ -1,0 +1,42 @@
+.jumbotron {
+    background-color: black;
+    color: #ffffff;
+    font-family: Arial, Helvetica, sans-serif;
+}
+h1.header {
+    font-size: 68px;
+    font-weight: noraml;
+}
+.card-header {
+    padding-top: 12px;
+    padding-bottom: 12px;
+    text-align: left;
+    background-color: blue;
+    color: white;
+  }
+
+  input[type=submit] {
+    background-color: blue;
+    border: none;
+    color: white;
+    padding: 10px;
+    text-decoration: none;
+    cursor: pointer;
+  }
+
+  input[type=text]:focus {
+    border: 3px solid #555;
+  }
+
+  button {
+    margin: 10px 5px 10px 5px;
+    background-color: blue;
+    border: none;
+    color: white;
+    padding: 10px;
+    text-decoration: none;
+    cursor: pointer;
+}
+label {
+    font-weight: bold;
+}
