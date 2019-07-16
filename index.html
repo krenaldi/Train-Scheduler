@@ -128,11 +128,11 @@
         var database = firebase.database();
         var train = "";
         var destination = "";
-        var time = "";
+        var firstTrain = "";
         var frequency = 0;
 
         // Capture Button Click
-        $("#add-train").on("click", function (event) {
+        $("#add-train").on("submit", function (event) {
             // Don't refresh the page!
             event.preventDefault();
 
@@ -141,14 +141,18 @@
             var data = {
                 train: $("#train").val().trim(),
                 destination: $("#destination").val().trim(),
-                time: $("#first-train").val().trim(),
+                firstTrain: $("#first-train").val().trim(),
                 frequency: $("#frequency").val().trim(),
                 //dateAdded: firebase.database.ServerValue.TIMESTAMP
             }
 
             database.ref().push(data);
 
-            // Don't forget to provide initial data to your Firebase database.
+            // Empty values in form after submit
+            $("#train").val("");
+            $("#destination").val("");
+            $("#first-train").val("");
+            $("#frequency").val("");
 
         });
         // Firebase watcher + initial loader HINT: .on("value")
@@ -159,8 +163,46 @@
             // Log the value of the various properties
             console.log(childSnapshot.val().train);
             console.log(childSnapshot.val().destination);
-            console.log(childSnapshot.val().time);
+            console.log(childSnapshot.val().firstTrain);
             console.log(childSnapshot.val().frequency);
+
+            // Calculate time for next train and minutes away based on frequency and first train time
+            // Variable of time of first train taken from Firebase DB
+            var firstTrain = childSnapshot.val().firstTrain;
+            // Variable to parse the frequency into interger for calculation
+            var tFrequency = parseInt(childSnapshot.val().frequency);
+            // Variable to hold the object for the first time of train starting back from 1 year ago
+            var firstTime = moment(firstTrain, "HH:mm").subtract(1, "years");
+            console.log(firstTrain);
+            console.log(firstTime);
+            // Variable for current time
+            var currentTime = moment();
+            // Variable to hold current year from 1 year ago
+            var currentTimeCalc = moment().subtract(1, "years");
+            // Variable to hold the difference in minutes between current time and firstTime variable
+            var diffTime = moment().diff(moment(firstTime), "minutes");
+            // Variable to hold the remainder of diffTime divided by tFrequency
+            var tRemainder = diffTime % tFrequency;
+            // Variable to calculate the minutes remaining
+            var minutesRemaining = tFrequency - tRemainder;
+            // Variable to calculate time of next train
+            var nextTrain = moment().add(minutesRemaining, "minutes").format("hh:mm A");
+            // Variable to calculate the minutes between the firstTime and the currentTimeCalc
+            var beforeCalc = moment(firstTime).diff(currentTimeCalc, "minutes");
+            // Variable to round up the duration of the minutes of beforeCalc
+            var beforeMinutes = Math.ceil(moment.duration(beforeCalc).asMinutes());
+
+            // Determine if the currentCalcTime minus firstTime is less than 0 and if so replace with nextTrain value
+            if ((currentTimeCalc - firstTime) < 0){
+                nextTrain = childSnapshot.val().firstTrain;
+                minutesRemaining = beforeMinutes;
+                console.log("Before First Train");
+            } else {
+                nextTrain = moment().add(minutesRemaining, "minutes").format("hh:mm A");
+                minutesRemaining = tFrequency - tRemainde;
+                console.log("Working");
+            }
+
 
             var train_display = $("<td>").text(childSnapshot.val().train);
             var destination_display = $("<td>").text(childSnapshot.val().destination);
