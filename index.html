@@ -156,10 +156,10 @@
             //console.log(childSnapshot.val());
 
             // Log the value of the various properties
-            console.log(childSnapshot.val().train);
-            console.log(childSnapshot.val().destination);
-            console.log(childSnapshot.val().firstTrain);
-            console.log(childSnapshot.val().frequency);
+            // console.log(childSnapshot.val().train);
+            // console.log(childSnapshot.val().destination);
+            // console.log(childSnapshot.val().firstTrain);
+            // console.log(childSnapshot.val().frequency);
 
             // Calculate time for next train and minutes away based on frequency and first train time
             // Variable of time of first train taken from Firebase DB
@@ -170,41 +170,41 @@
             // Variable to hold the object for the first time of train starting back from 1 year ago
             var firstTime = moment(firstTrain, "HH:mm").subtract(1, "years");
             //console.log(firstTrain);
-            console.log(firstTime);
+            // console.log(firstTime);
             // Variable for current time
             var currentTime = moment();
-            console.log(currentTime);
+            // console.log(currentTime);
             // Variable to hold current year from 1 year ago
             var currentTimeCalc = moment().subtract(1, "years");
-            console.log(currentTimeCalc);
+            // console.log(currentTimeCalc);
             // Variable to hold the difference in minutes between current time and firstTime variable
             var diffTime = moment().diff(moment(firstTime), "minutes");
-            console.log(diffTime);
+            // console.log(diffTime);
             // Variable to hold the remainder of diffTime divided by tFrequency
             var tRemainder = diffTime % tFrequency;
-            console.log(tRemainder);
+            // console.log(tRemainder);
             // Variable to calculate the minutes remaining
             var minutesRemaining = tFrequency - tRemainder;
-            console.log(minutesRemaining);
+            // console.log(minutesRemaining);
             // Variable to calculate time of next train
             var nextTrain = moment().add(minutesRemaining, "minutes").format("hh:mm A");
-            console.log(nextTrain);
+            // console.log(nextTrain);
             // Variable to calculate the minutes between the firstTime and the currentTimeCalc
             var beforeCalc = moment(firstTime).diff(currentTimeCalc, "minutes");
-            console.log(beforeCalc);
+            // console.log(beforeCalc);
             // Variable to round up the duration of the minutes of beforeCalc
             var beforeMinutes = Math.ceil(moment.duration(beforeCalc).asMinutes());
-            console.log(beforeMinutes);
+            // console.log(beforeMinutes);
 
             // Determine if the currentCalcTime minus firstTime is less than 0 and if so replace with nextTrain value
             if ((currentTimeCalc - firstTime) < 0){
                 nextTrain = childSnapshot.val().firstTrain;
                 minutesRemaining = beforeMinutes;
-                console.log("Before First Train");
+                // console.log("Before First Train");
             } else {
                 nextTrain = moment().add(minutesRemaining, "minutes").format("hh:mm A");
                 minutesRemaining = tFrequency - tRemainder;
-                console.log("Working");
+                // console.log("Working");
             }
 
             var train_display = $("<td>").text(childSnapshot.val().train);
