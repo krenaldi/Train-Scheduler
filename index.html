@@ -9,7 +9,7 @@
         href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0/css/bootstrap.min.css" />
 
     <!-- Font Awesome CSS Icons (For cool glyphicons) -->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css" />
+    <script src="https://kit.fontawesome.com/9c26717d6b.js"></script>
 
     <!-- Style to fix the issue of text extending past card length -->
     <link rel="stylesheet" href="css/style.css">
@@ -33,7 +33,7 @@
 
                     <!-- card heading for the train schedule -->
                     <div class="card-header">
-                        <strong>Current Train Schedule</strong>
+                        <i class="fas fa-train"></i>&nbsp;<strong>Current Train Schedule</strong>
                     </div>
 
                     <!-- This main card will hold the train schedule for each train -->
@@ -58,7 +58,7 @@
             <div class="col-sm-12">
                 <div class="card">
                     <div class="card-header">
-                        <strong>Add Train</strong>
+                        <i class="fas fa-train"></i>&nbsp;<strong>Add Train</strong>
                     </div>
                     <div class="card-body">
                         <!-- Here we create an HTML Form for handling the inputs-->
@@ -104,8 +104,8 @@
     <script src="https://momentjs.com/downloads/moment.min.js"></script>
 
     <!-- LINKS FOR FIREBASE GO HERE -->
-    <script src="https://www.gstatic.com/firebasejs/6.3.0/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/6.3.0/firebase-database.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/6.0.4/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/6.0.4/firebase-database.js"></script>
 
     <!-- Code to the JavaScript File -->
     <script>
@@ -126,13 +126,9 @@
 
         // Create a variable to reference the database
         var database = firebase.database();
-        var train = "";
-        var destination = "";
-        var firstTrain = "";
-        var frequency = 0;
 
         // Capture Button Click
-        $("#add-train").on("submit", function (event) {
+        $("#add-train").on("click", function (event) {
             // Don't refresh the page!
             event.preventDefault();
 
@@ -143,7 +139,6 @@
                 destination: $("#destination").val().trim(),
                 firstTrain: $("#first-train").val().trim(),
                 frequency: $("#frequency").val().trim(),
-                //dateAdded: firebase.database.ServerValue.TIMESTAMP
             }
 
             database.ref().push(data);
@@ -158,7 +153,7 @@
         // Firebase watcher + initial loader HINT: .on("value")
         database.ref().on("child_added", function (childSnapshot) {
             // Print the initial data to the console.
-            console.log(childSnapshot.val());
+            //console.log(childSnapshot.val());
 
             // Log the value of the various properties
             console.log(childSnapshot.val().train);
@@ -171,26 +166,35 @@
             var firstTrain = childSnapshot.val().firstTrain;
             // Variable to parse the frequency into interger for calculation
             var tFrequency = parseInt(childSnapshot.val().frequency);
+            console.log(tFrequency);
             // Variable to hold the object for the first time of train starting back from 1 year ago
             var firstTime = moment(firstTrain, "HH:mm").subtract(1, "years");
-            console.log(firstTrain);
+            //console.log(firstTrain);
             console.log(firstTime);
             // Variable for current time
             var currentTime = moment();
+            console.log(currentTime);
             // Variable to hold current year from 1 year ago
             var currentTimeCalc = moment().subtract(1, "years");
+            console.log(currentTimeCalc);
             // Variable to hold the difference in minutes between current time and firstTime variable
             var diffTime = moment().diff(moment(firstTime), "minutes");
+            console.log(diffTime);
             // Variable to hold the remainder of diffTime divided by tFrequency
             var tRemainder = diffTime % tFrequency;
+            console.log(tRemainder);
             // Variable to calculate the minutes remaining
             var minutesRemaining = tFrequency - tRemainder;
+            console.log(minutesRemaining);
             // Variable to calculate time of next train
             var nextTrain = moment().add(minutesRemaining, "minutes").format("hh:mm A");
+            console.log(nextTrain);
             // Variable to calculate the minutes between the firstTime and the currentTimeCalc
             var beforeCalc = moment(firstTime).diff(currentTimeCalc, "minutes");
+            console.log(beforeCalc);
             // Variable to round up the duration of the minutes of beforeCalc
             var beforeMinutes = Math.ceil(moment.duration(beforeCalc).asMinutes());
+            console.log(beforeMinutes);
 
             // Determine if the currentCalcTime minus firstTime is less than 0 and if so replace with nextTrain value
             if ((currentTimeCalc - firstTime) < 0){
@@ -199,22 +203,18 @@
                 console.log("Before First Train");
             } else {
                 nextTrain = moment().add(minutesRemaining, "minutes").format("hh:mm A");
-                minutesRemaining = tFrequency - tRemainde;
+                minutesRemaining = tFrequency - tRemainder;
                 console.log("Working");
             }
-
 
             var train_display = $("<td>").text(childSnapshot.val().train);
             var destination_display = $("<td>").text(childSnapshot.val().destination);
             var frequency_display = $("<td>").text(childSnapshot.val().frequency);
-            var time_display = $("<td>").text(childSnapshot.val().time);
-            //var months_worked = Math.abs(moment(childSnapshot.val().date).diff(moment(), "months"));
-            //console.log(months_worked);
-            //var monthly_worked_display = $("<td>").text(months_worked);
-            //var billed = months_worked * childSnapshot.val().rate;
-            var miuntes_away_display = $("<td>").text(billed);
+            var next_train_display = $("<td>").text(nextTrain);
+            var minutes_away_display = $("<td>").text(minutesRemaining);
             var row = $("<tr>");
-            row.append(train_display, destination_display, frequency_display, time_display, minutes_away_rate_display);
+            //row.append(train_display, destination_display, frequency_display, next_train_display);
+            row.append(train_display, destination_display, frequency_display, next_train_display, minutes_away_display);
             $(".table").append(row);
 
             // Create Error Handling
